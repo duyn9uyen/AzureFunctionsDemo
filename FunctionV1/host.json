@@ -1,0 +1,4 @@
+// Set functionTimeout to 10 minutes
+{
+  "functionTimeout": "00:10:00"
+}
