@@ -10,9 +10,9 @@ using System.Linq;
 
 namespace FunctionV1
 {
-    public static class VsBlobTriggerv1
+    public static class VsBlobTriggerV1
     {
-        [FunctionName("VsBlobTriggerv1")]
+        [FunctionName("VsBlobTriggerV1")]
         public static void Run([BlobTrigger("xmldropsv1/{name}", Connection = "AzureWebJobsStorage")]string myBlob, string name, TraceWriter log)
         {
             log.Info($"C# Blob trigger (v1) function Processing blob Name:{name}; Size: {myBlob.Length} Bytes");
@@ -21,9 +21,6 @@ namespace FunctionV1
 
             // order by recipe ids
             fullRecipeSet.Recipes.Recipe = fullRecipeSet.Recipes.Recipe.OrderBy(x => x.Recipe_id).ToList();
-
-            // Get the Taxonomy types into a separate doc
-            //var taxDocument = Helper.XmlObj<TaxonomyTypes>.SerializeToXmlDoc(RecipeSet.TaxonomyTypes);
 
             var batchSize = Convert.ToInt32(ConfigurationManager.AppSettings["RecipeBatchSize"]);
 

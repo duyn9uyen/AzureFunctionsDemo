@@ -36,8 +36,6 @@ namespace FunctionV1
             }
         }
 
-        public TraceWriter Log { get; }
-
         public void UploadXmlFile(XmlDocument doc, string filename)
         {
             //blob = new CloudBlockBlob(;
