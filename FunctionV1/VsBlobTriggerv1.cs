@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Serialization;
 using System.Linq;
+using DataAccess;
 
 namespace FunctionV1
 {
@@ -15,7 +16,7 @@ namespace FunctionV1
         [FunctionName("VsBlobTriggerV1")]
         public static void Run([BlobTrigger("xmldropsv1/{name}", Connection = "AzureWebJobsStorage")]string myBlob, string name, TraceWriter log)
         {
-            log.Info($"C# Blob trigger (v1) function Processing blob Name:{name}; Size: {myBlob.Length} Bytes");
+            log.Info($"Xml dropped, processing parent file name:{name}; Size: {myBlob.Length} Bytes");
 
             var fullRecipeSet = Helper.XmlObj<RecipeSet>.DeserializeData(myBlob);
 
@@ -24,7 +25,8 @@ namespace FunctionV1
 
             var batchSize = Convert.ToInt32(ConfigurationManager.AppSettings["RecipeBatchSize"]);
 
-            var processBlob = GetProcessingBlob(log);
+            var thisBlobStorage = Helper.GetBlobStorage("xmldropsv1", log);
+            var processBlobStorage = Helper.GetBlobStorage("processing", log);
 
             int count = 0;
             int index = 0;
@@ -46,20 +48,12 @@ namespace FunctionV1
 
                 // Upload document to 'processing' blob
                 var filename = name.Insert(name.ToLower().IndexOf(".xml"), "_" + index); //append the index count to the original filename. Ex. recipe20180130_1.xml
-                processBlob.UploadXmlFile(newRecipeDoc, filename);
+                processBlobStorage.UploadXmlFile(newRecipeDoc, filename);
 
                 count += batchSize;
             }
-        }
 
-        private static BlobStorageAccess GetProcessingBlob(TraceWriter log)
-        {
-            var connString = ConfigurationManager.AppSettings["AzureWebJobsStorage"];
-            var containerName = ConfigurationManager.AppSettings["ProcessingContainerName"];
-
-            var blob = new BlobStorageAccess(connString, containerName, log);
-
-            return blob;
+            thisBlobStorage.DeleteFile(name);
         }
     }
 }

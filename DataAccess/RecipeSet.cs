@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace FunctionV1
+namespace DataAccess
 {
     [XmlRoot(ElementName = "RecipeSet")]
     public class RecipeSet
@@ -23,6 +24,7 @@ namespace FunctionV1
     [XmlRoot(ElementName = "Taxonomy")]
     public class Taxonomy
     {
+        [Key]
         [XmlAttribute(AttributeName = "Taxonomy_id")]
         public string Taxonomy_id { get; set; }
         [XmlAttribute(AttributeName = "name")]
@@ -44,6 +46,8 @@ namespace FunctionV1
     [XmlRoot(ElementName = "Nutrition")]
     public class Nutrition
     {
+        [Key]
+        public int Nutrition_id { get; set; }
         [XmlElement(ElementName = "calories")]
         public string Calories { get; set; }
         [XmlElement(ElementName = "totalfat")]
@@ -73,6 +77,8 @@ namespace FunctionV1
     [XmlRoot(ElementName = "Facet")]
     public class Facet
     {
+        [Key]
+        public int Facet_id { get; set; }
         [XmlAttribute(AttributeName = "Taxonomy_id")]
         public string Taxonomy_id { get; set; }
         [XmlAttribute(AttributeName = "name")]
@@ -82,8 +88,11 @@ namespace FunctionV1
     [XmlRoot(ElementName = "Recipe")]
     public class Recipe
     {
+        [Key]
+        [XmlAttribute(AttributeName = "recipe_id")]
+        public string Recipe_id { get; set; }
         [XmlElement(ElementName = "Nutrition")]
-        public Nutrition Nutrition { get; set; }
+        public List<Nutrition> Nutrition { get; set; }
         [XmlElement(ElementName = "Facet")]
         public List<Facet> Facet { get; set; }
         [XmlAttribute(AttributeName = "author")]
@@ -94,8 +103,11 @@ namespace FunctionV1
         public string Description { get; set; }
         [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
-        [XmlAttribute(AttributeName = "recipe_id")]
-        public string Recipe_id { get; set; }
+
+        //public virtual ICollection<Facet> Facets { get; set; }
+        //public virtual ICollection<Taxonomy> Taxonomies { get; set; }
+        //public virtual ICollection<Nutrition> Nutritions { get; set; }
+
     }
 
     [XmlRoot(ElementName = "Recipes")]

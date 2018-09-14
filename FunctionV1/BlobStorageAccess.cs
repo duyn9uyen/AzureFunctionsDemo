@@ -38,7 +38,6 @@ namespace FunctionV1
 
         public void UploadXmlFile(XmlDocument doc, string filename)
         {
-            //blob = new CloudBlockBlob(;
             blob = container.GetBlockBlobReference(filename);
             blob.Properties.ContentType = "application/xml";
 
@@ -55,6 +54,12 @@ namespace FunctionV1
                     log.Error("Error uploading file. " + ex.Message + " " + ex.InnerException);
                 };
             }
+        }
+
+        public void DeleteFile(string filename)
+        {
+            blob = container.GetBlockBlobReference(filename);
+            blob.DeleteIfExists();
         }
     }
 }

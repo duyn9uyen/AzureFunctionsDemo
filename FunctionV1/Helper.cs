@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Azure.WebJobs.Host;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -59,6 +61,16 @@ namespace FunctionV1
                 }
                 return document;
             }
+        }
+
+        public static BlobStorageAccess GetBlobStorage(string containerName, TraceWriter log)
+        {
+            var connString = ConfigurationManager.AppSettings["AzureWebJobsStorage"];
+            //var containerName = ConfigurationManager.AppSettings["ProcessingContainerName"];
+
+            var blob = new BlobStorageAccess(connString, containerName, log);
+
+            return blob;
         }
     }
 }
