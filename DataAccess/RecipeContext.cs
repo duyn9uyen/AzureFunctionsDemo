@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccess.POCOs;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -18,5 +19,10 @@ namespace DataAccess
         public DbSet<Facet> Facet { get; set; }
         public DbSet<Nutrition> Nutrition { get; set; }
         public DbSet<Taxonomy> Taxonomy { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

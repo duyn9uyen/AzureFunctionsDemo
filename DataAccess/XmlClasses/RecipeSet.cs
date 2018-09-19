@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace DataAccess
+namespace DataAccess.XmlClasses
 {
     [XmlRoot(ElementName = "RecipeSet")]
     public class RecipeSet
@@ -22,9 +22,8 @@ namespace DataAccess
     }
 
     [XmlRoot(ElementName = "Taxonomy")]
-    public class Taxonomy
+    public class TaxonomyElement
     {
-        [Key]
         [XmlAttribute(AttributeName = "Taxonomy_id")]
         public string Taxonomy_id { get; set; }
         [XmlAttribute(AttributeName = "name")]
@@ -36,17 +35,16 @@ namespace DataAccess
     {
         public TaxonomyTypes()
         {
-            Taxonomy = new List<Taxonomy>();
+            Taxonomy = new List<TaxonomyElement>();
         }
 
         [XmlElement(ElementName = "Taxonomy")]
-        public List<Taxonomy> Taxonomy { get; set; }
+        public List<TaxonomyElement> Taxonomy { get; set; }
     }
 
     [XmlRoot(ElementName = "Nutrition")]
-    public class Nutrition
+    public class NutritionElement
     {
-        [Key]
         public int Nutrition_id { get; set; }
         [XmlElement(ElementName = "calories")]
         public string Calories { get; set; }
@@ -75,9 +73,8 @@ namespace DataAccess
     }
 
     [XmlRoot(ElementName = "Facet")]
-    public class Facet
+    public class FacetElement
     {
-        [Key]
         public int Facet_id { get; set; }
         [XmlAttribute(AttributeName = "Taxonomy_id")]
         public string Taxonomy_id { get; set; }
@@ -86,15 +83,14 @@ namespace DataAccess
     }
 
     [XmlRoot(ElementName = "Recipe")]
-    public class Recipe
+    public class RecipeElement
     {
-        [Key]
         [XmlAttribute(AttributeName = "recipe_id")]
         public string Recipe_id { get; set; }
         [XmlElement(ElementName = "Nutrition")]
-        public List<Nutrition> Nutrition { get; set; }
+        public NutritionElement Nutrition { get; set; }
         [XmlElement(ElementName = "Facet")]
-        public List<Facet> Facet { get; set; }
+        public List<FacetElement> Facet { get; set; }
         [XmlAttribute(AttributeName = "author")]
         public string Author { get; set; }
         [XmlAttribute(AttributeName = "createdDate")]
@@ -103,11 +99,6 @@ namespace DataAccess
         public string Description { get; set; }
         [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
-
-        //public virtual ICollection<Facet> Facets { get; set; }
-        //public virtual ICollection<Taxonomy> Taxonomies { get; set; }
-        //public virtual ICollection<Nutrition> Nutritions { get; set; }
-
     }
 
     [XmlRoot(ElementName = "Recipes")]
@@ -115,11 +106,11 @@ namespace DataAccess
     {
         public Recipes()
         {
-            Recipe = new List<Recipe>();
+            Recipe = new List<RecipeElement>();
         }
 
         [XmlElement(ElementName = "Recipe")]
-        public List<Recipe> Recipe { get; set; }
+        public List<RecipeElement> Recipe { get; set; }
     }
 
     

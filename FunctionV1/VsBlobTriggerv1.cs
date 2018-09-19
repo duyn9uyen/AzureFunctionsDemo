@@ -8,6 +8,7 @@ using System.Xml.XPath;
 using System.Xml.Serialization;
 using System.Linq;
 using DataAccess;
+using DataAccess.XmlClasses;
 
 namespace FunctionV1
 {

@@ -4,11 +4,20 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using System.Linq;
 using System;
+using DataAccess.XmlClasses;
+using DataAccess.POCOs;
+using DataAccess.AutoMapperConfig;
+//using AutoMapper;
 
 namespace FunctionV1
 {
     public static class ProcessingFunction
     {
+        static ProcessingFunction()
+        {
+            MapInitializer.Activate();
+        }
+
         [FunctionName("ProcessingFunction")]
         public static void Run([BlobTrigger("processing/{name}", Connection = "AzureWebJobsStorage")]string myBlob, string name, TraceWriter log)
         {
@@ -26,7 +35,22 @@ namespace FunctionV1
             {
                 using (var ctx = new RecipeContext())
                 {
-                    ctx.Recipe.AddRange(fullRecipeSet.Recipes.Recipe);
+                    // Save taxonomies
+                    foreach (var taxElement in fullRecipeSet.TaxonomyTypes.Taxonomy)
+                    {
+                        var taxdto = MapInitializer.Mapper.Map<Taxonomy>(taxElement);
+                        ctx.Taxonomy.Add(taxdto);
+                    }
+
+                    // Todo: Save unique facets so that we don't have duplicate taxonomyid and name combinations.
+
+                    // Map xml object to POCO then save off recipe
+                    foreach (var recipeElement in fullRecipeSet.Recipes.Recipe)
+                    {
+                        var recipeDto = MapInitializer.Mapper.Map<Recipe>(recipeElement);
+                        ctx.Recipe.Add(recipeDto);
+                    }
+
                     ctx.SaveChanges();
 
                     successBlobStorage.UploadXmlFile(doc, name);
