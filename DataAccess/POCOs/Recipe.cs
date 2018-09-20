@@ -12,7 +12,6 @@ namespace DataAccess.POCOs
         [Key]
         public int Recipe_id { get; set; }
         public Nutrition Nutrition { get; set; }
-        //public List<Facet> Facet { get; set; }
         public string Author { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Description { get; set; }

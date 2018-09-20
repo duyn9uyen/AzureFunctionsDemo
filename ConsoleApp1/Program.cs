@@ -12,41 +12,104 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            var tax = new Taxonomy()
+            //method1();
+            method2();
+        }
+
+        static void method1()
+        {
+            var course1 = new Course()
             {
-                Name = "Category",
-                Taxonomy_id = 1
+                Department_id = 100,
+                Name = "English"
             };
 
-            var facet = new Facet()
+            var course2 = new Course()
             {
-                Name = "facet1",
-                Taxonomy_id = 1
+                Department_id = 100,
+                Name = "Spanish"
             };
 
-            var nutrition = new Nutrition()
+            var course3 = new Course()
             {
-                Calories = "5g",
-                Totalfat = "0g"
+                Department_id = 100,
+                Name = "English"
             };
 
-            var recipe = new Recipe();
-            recipe.Author = "me";
-            recipe.CreatedDate = DateTime.Now;
-            recipe.Description = "debugging";
-            recipe.Name = "test recipe";
-            recipe.Recipe_id = 1;
+            var student1 = new Student();
+            student1.Name = "james";
+            student1.Courses = new List<Course>();
+            student1.Courses.Add(course1);
+            student1.Courses.Add(course2);
+            student1.Courses.Add(course3);
 
-            recipe.Nutrition = nutrition;
-            recipe.Facets = new List<Facet>();
-            recipe.Facets.Add(facet);
-            recipe.Taxonomies = new List<Taxonomy>();
-            recipe.Taxonomies.Add(tax);
+            var student2 = new Student();
+            student2.Name = "John";
+            student2.Courses = new List<Course>();
+            student2.Courses.Add(course1);
+            student2.Courses.Add(course1);
 
             using (var ctx = new RecipeContext())
             {
-                ctx.Recipe.Add(recipe);
-                ctx.SaveChanges();
+                try
+                {
+                    ctx.Student.Add(student1);
+                    ctx.Student.Add(student2);
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
+        static void method2()
+        {
+            var facet1 = new Facet()
+            { 
+                Name = "Lunch",
+                Taxonomy_id = 1
+            };
+
+            var facet2 = new Facet()
+            {
+                Name = "Dinner",
+                Taxonomy_id = 1
+            };
+
+            var facet3 = new Facet()
+            {
+                Name = "American",
+                Taxonomy_id = 2
+            };
+
+            var recipe1 = new Recipe()
+            {
+                CreatedDate = DateTime.Now,
+                Name = "Recipe 1"
+            };
+            recipe1.Facets = new List<Facet>();
+            recipe1.Facets.Add(facet1);
+
+            var recipe2 = new Recipe()
+            {
+                CreatedDate = DateTime.Now,
+                Name = "Recipe 2"
+            };
+            recipe2.Facets = new List<Facet>();
+            recipe2.Facets.Add(facet1);
+
+            using (var ctx = new RecipeContext())
+            {
+                try
+                {
+                    ctx.Recipe.Add(recipe1);
+                    ctx.Recipe.Add(recipe2);
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
     }

@@ -17,6 +17,7 @@ namespace DataAccess.AutoMapperConfig
             {
                 cfg.CreateMap<RecipeElement, Recipe>()
                     .ForMember(dest => dest.Facets, opt => opt.MapFrom(src => src.Facet));
+
                 cfg.CreateMap<TaxonomyElement, Taxonomy>();
                 cfg.CreateMap<FacetElement, Facet>();
                 cfg.CreateMap<NutritionElement, Nutrition>();

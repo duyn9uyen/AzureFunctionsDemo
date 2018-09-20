@@ -7,6 +7,9 @@ using System;
 using DataAccess.XmlClasses;
 using DataAccess.POCOs;
 using DataAccess.AutoMapperConfig;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 //using AutoMapper;
 
 namespace FunctionV1
@@ -24,9 +27,11 @@ namespace FunctionV1
             log.Info($"Processing file name:{name} \n Size: {myBlob.Length} Bytes");
 
             var fullRecipeSet = Helper.XmlObj<RecipeSet>.DeserializeData(myBlob);
+
             // create xml document
             var doc = Helper.XmlObj<TaxonomyTypes>.SerializeToXmlDoc(myBlob);
 
+            // get all the blob storages
             var thisBlobStorage = Helper.GetBlobStorage("processing", log);
             var successBlobStorage = Helper.GetBlobStorage("success", log);
             var failureBlobStorage = Helper.GetBlobStorage("failure", log);
@@ -35,21 +40,27 @@ namespace FunctionV1
             {
                 using (var ctx = new RecipeContext())
                 {
-                    // Save taxonomies
-                    foreach (var taxElement in fullRecipeSet.TaxonomyTypes.Taxonomy)
-                    {
-                        var taxdto = MapInitializer.Mapper.Map<Taxonomy>(taxElement);
-                        ctx.Taxonomy.Add(taxdto);
-                    }
-
-                    // Todo: Save unique facets so that we don't have duplicate taxonomyid and name combinations.
-
-                    // Map xml object to POCO then save off recipe
+                    #region Assign facet to recipe and recipe to context
                     foreach (var recipeElement in fullRecipeSet.Recipes.Recipe)
                     {
-                        var recipeDto = MapInitializer.Mapper.Map<Recipe>(recipeElement);
+                        Recipe recipeDto = MapInitializer.Mapper.Map<Recipe>(recipeElement);
+
+                        var facs = recipeDto.Facets;
+
+                        // Null out the facets that gets mapped from the xml. 
+                        recipeDto.Facets = new List<Facet>();
+
+                        // Reassign facet from the db. Otherwise, trying to save the recipe with the 
+                        // facets that was mapped from the xml will cause duplicate facts trying to insert.
+                        foreach (var f in facs)
+                        {
+                            var dbFacet = ctx.Facet.Where(x => x.Taxonomy_id == f.Taxonomy_id && x.Name == f.Name).First();
+                            recipeDto.Facets.Add(dbFacet);
+                        }
+
                         ctx.Recipe.Add(recipeDto);
                     }
+                    #endregion
 
                     ctx.SaveChanges();
 

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace DataAccess.POCOs
 {
-    public class Taxonomy
+    public class Student
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Taxonomy_id { get; set; }
+        public int StudentId { get; set; }
 
-        [Index(IsUnique = true)]
-        [StringLength(500)]
         public string Name { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
+
     }
 }

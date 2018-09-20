@@ -10,15 +10,16 @@ namespace DataAccess.POCOs
 {
     public class Facet
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Facet_id { get; set; }
-        //[Index("IX_UniqueFacetNameAndTaxonomy_id", 1, IsUnique = true)]
+
+        [Key]
+        [Column(Order = 0)]
         public int Taxonomy_id { get; set; }
 
-        // Todo: Make taxonomy_id and Name unique
-        //[Index("IX_UniqueFacetNameAndTaxonomy_id", 2, IsUnique = true)]
-        //[Column(TypeName = "NVARCHAR")]
-        //[StringLength(500)]
+        [Key]
+        [Column(Order = 1)]
+        [StringLength(500)]
         public string Name { get; set; }
 
         public virtual ICollection<Recipe> Recipes { get; set; }

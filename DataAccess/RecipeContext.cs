@@ -17,8 +17,11 @@ namespace DataAccess
 
         public DbSet<Recipe> Recipe { get; set; }
         public DbSet<Facet> Facet { get; set; }
+        //public DbSet<RecipeFacet> RecipeFacet { get; set; }
         public DbSet<Nutrition> Nutrition { get; set; }
         public DbSet<Taxonomy> Taxonomy { get; set; }
+        public DbSet<Student> Student { get; set; }
+        public DbSet<Course> Course { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
