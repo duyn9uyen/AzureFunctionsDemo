@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
+    //[DbConfigurationType(typeof(DataContextConfiguration))]
     public class RecipeContext : DbContext
     {
         public RecipeContext() : base("name=RecipeConnection")

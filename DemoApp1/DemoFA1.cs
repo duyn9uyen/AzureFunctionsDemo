@@ -1,29 +1,27 @@
+using System;
+using System.Configuration;
 using System.IO;
+using DataAccess.AutoMapperConfig;
+using DataAccess.XmlClasses;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using System.Configuration;
-using System;
-using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Serialization;
 using System.Linq;
 using DataAccess;
-using DataAccess.XmlClasses;
-using DataAccess.AutoMapperConfig;
 using DataAccess.POCOs;
 using System.Collections.Generic;
+using System.Threading;
 
-namespace FunctionV1
+namespace DemoApp1
 {
-    public static class VsBlobTriggerV1
+    public static class DemoFA1
     {
-        static VsBlobTriggerV1()
+        static DemoFA1()
         {
             MapInitializer.Activate();
         }
 
-        [FunctionName("VsBlobTriggerV1")]
-        public static void Run([BlobTrigger("xmldropsv1/{name}", Connection = "AzureWebJobsStorage")]string myBlob, string name, TraceWriter log)
+        [FunctionName("DemoFA1")]
+        public static void Run([BlobTrigger("drop/{name}", Connection = "AzureWebJobsStorage")]string myBlob, string name, TraceWriter log)
         {
             log.Info($"Xml dropped, processing parent file name:{name}; Size: {myBlob.Length} Bytes");
 
@@ -34,23 +32,30 @@ namespace FunctionV1
 
             var batchSize = Convert.ToInt32(ConfigurationManager.AppSettings["RecipeBatchSize"]);
 
-            var thisBlobStorage = Helper.GetBlobStorage("xmldropsv1", log);
+            var thisBlobStorage = Helper.GetBlobStorage("drop", log);
             var processBlobStorage = Helper.GetBlobStorage("processing", log);
 
-            
+
             using (var ctx = new RecipeContext())
             {
                 #region Save Taxonomies
                 foreach (var taxElement in fullRecipeSet.TaxonomyTypes.Taxonomy)
                 {
-                    if (ctx.Taxonomy != null)
+                    try
                     {
-                        var taxes = ctx.Taxonomy.ToList();
-                        if (taxes.Count <= 0 || !ctx.Taxonomy.Any(x => x.Name == taxElement.Name))
+                        if (ctx.Taxonomy != null)
                         {
-                            var taxdto = MapInitializer.Mapper.Map<Taxonomy>(taxElement);
-                            ctx.Taxonomy.Add(taxdto);
+                            var taxes = ctx.Taxonomy.ToList();
+                            if (taxes.Count <= 0 || !ctx.Taxonomy.Any(x => x.Name == taxElement.Name))
+                            {
+                                var taxdto = MapInitializer.Mapper.Map<Taxonomy>(taxElement);
+                                ctx.Taxonomy.Add(taxdto);
+                            }
                         }
+                    }
+                    catch(Exception ex)
+                    {
+                        log.Error(String.Format("Unable to read database. {0}, {1}", ex.Message, ex.InnerException));
                     }
                 }
                 ctx.SaveChanges();
@@ -102,6 +107,9 @@ namespace FunctionV1
                 processBlobStorage.UploadXmlFile(newRecipeDoc, filename);
 
                 count += batchSize;
+
+                // To slow down the files that get created. Don't want to fire the triggers all at once.
+                Thread.Sleep(Convert.ToInt32(ConfigurationManager.AppSettings["MillisecondsBetweenFileCreation"]));
             }
 
             thisBlobStorage.DeleteFile(name);
