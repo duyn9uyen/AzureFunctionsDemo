@@ -39,8 +39,8 @@ namespace DemoApp1
             {
                 using (var ctx = new RecipeContext())
                 {
-                #region Assign facet to recipe and recipe to context
-                foreach (var recipeElement in fullRecipeSet.Recipes.Recipe)
+                    #region Assign facet to recipe and recipe to context
+                    foreach (var recipeElement in fullRecipeSet.Recipes.Recipe)
                     {
                         Recipe recipeDto = MapInitializer.Mapper.Map<Recipe>(recipeElement);
 
