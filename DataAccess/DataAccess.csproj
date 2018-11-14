@@ -57,12 +57,10 @@
   <ItemGroup>
     <Compile Include="AutoMapperConfig\MapInitializer.cs" />
     <Compile Include="DataContextConfiguration.cs" />
-    <Compile Include="POCOs\Course.cs" />
     <Compile Include="POCOs\Facet.cs" />
     <Compile Include="POCOs\Nutrition.cs" />
     <Compile Include="POCOs\Recipe.cs" />
     <Compile Include="POCOs\RecipeFacet.cs" />
-    <Compile Include="POCOs\Student.cs" />
     <Compile Include="POCOs\Taxonomy.cs" />
     <Compile Include="RecipeContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

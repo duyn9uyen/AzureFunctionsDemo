@@ -25,6 +25,7 @@ namespace DemoApp1
         {
             log.Info($"Xml dropped, processing parent file name:{name}; Size: {myBlob.Length} Bytes");
 
+            // Using a custom helper file that deserializes xml into an object.
             var fullRecipeSet = Helper.XmlObj<RecipeSet>.DeserializeData(myBlob);
 
             // order by recipe ids
@@ -32,9 +33,9 @@ namespace DemoApp1
 
             var batchSize = Convert.ToInt32(ConfigurationManager.AppSettings["RecipeBatchSize"]);
 
+            // Using a custom helper file that gets a reference to the blob storage by name
             var thisBlobStorage = Helper.GetBlobStorage("drop", log);
             var processBlobStorage = Helper.GetBlobStorage("processing", log);
-
 
             using (var ctx = new RecipeContext())
             {
@@ -83,7 +84,6 @@ namespace DemoApp1
                 #endregion
             }
 
-
             int count = 0;
             int index = 0;
             // split into smaller documents and move to 'processing' blob. This will allow for large file processing to succeed.
@@ -92,18 +92,19 @@ namespace DemoApp1
                 index++;
 
                 // take recipes in batches and to build a new document
-                var addToAdd = fullRecipeSet.Recipes.Recipe.Skip(count).Take(batchSize);
+                var recipesToAdd = fullRecipeSet.Recipes.Recipe.Skip(count).Take(batchSize);
 
                 // Add recipes and any shared xml data to the file.
                 var subRecipeSet = new RecipeSet();
-                subRecipeSet.Recipes.Recipe.AddRange(addToAdd);
+                subRecipeSet.Recipes.Recipe.AddRange(recipesToAdd);
                 subRecipeSet.TaxonomyTypes = fullRecipeSet.TaxonomyTypes;
 
                 // create a new xml document
                 var newRecipeDoc = Helper.XmlObj<TaxonomyTypes>.SerializeToXmlDoc(subRecipeSet);
 
                 // Upload document to 'processing' blob
-                var filename = name.Insert(name.ToLower().IndexOf(".xml"), "_" + index); //append the index count to the original filename. Ex. recipe20180130_1.xml
+                // append the index count to the original filename. Ex. recipe20180130_1.xml
+                var filename = name.Insert(name.ToLower().IndexOf(".xml"), "_" + index); 
                 processBlobStorage.UploadXmlFile(newRecipeDoc, filename);
 
                 count += batchSize;

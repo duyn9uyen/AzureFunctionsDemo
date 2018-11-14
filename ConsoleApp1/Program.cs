@@ -12,55 +12,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            //method1();
             method2();
-        }
-
-        static void method1()
-        {
-            var course1 = new Course()
-            {
-                Department_id = 100,
-                Name = "English"
-            };
-
-            var course2 = new Course()
-            {
-                Department_id = 100,
-                Name = "Spanish"
-            };
-
-            var course3 = new Course()
-            {
-                Department_id = 100,
-                Name = "English"
-            };
-
-            var student1 = new Student();
-            student1.Name = "james";
-            student1.Courses = new List<Course>();
-            student1.Courses.Add(course1);
-            student1.Courses.Add(course2);
-            student1.Courses.Add(course3);
-
-            var student2 = new Student();
-            student2.Name = "John";
-            student2.Courses = new List<Course>();
-            student2.Courses.Add(course1);
-            student2.Courses.Add(course1);
-
-            using (var ctx = new RecipeContext())
-            {
-                try
-                {
-                    ctx.Student.Add(student1);
-                    ctx.Student.Add(student2);
-                    ctx.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                }
-            }
         }
 
         static void method2()
